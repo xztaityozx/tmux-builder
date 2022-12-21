@@ -13,7 +13,16 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
     runs-on: ${{matrix.os}}
     steps:
-      - run: echo Hello!
+      - name: get latest tag
+        id: var
+        run: echo "tag=$(gh release view --repo tmux/tmux --jq .tagName --json tagName)" >> $GITHUB_OUTPUT
+      - name: download tmux latest release
+        run: gh release download ${{steps.var.outputs.tag}} --repo tmux/tmux
+      - run: mkdir /dest
+      - run: ./configure --prefix=/dest
+      - run: make
+      - run: make install
+      - run: ls /dest
