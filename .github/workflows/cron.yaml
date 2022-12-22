@@ -23,8 +23,8 @@ jobs:
         run: echo "tag=$(gh release view --repo tmux/tmux --jq .tagName --json tagName)" >> $GITHUB_OUTPUT
       - name: download tmux latest release
         run: gh release download ${{steps.var.outputs.tag}} --repo tmux/tmux
-      - run: mkdir /dest
-      - run: ./configure --prefix=/dest
+      - run: mkdir ./dest
+      - run: ./configure --prefix=./dest
       - run: make
       - run: make install
-      - run: ls /dest
+      - run: ls ./dest
