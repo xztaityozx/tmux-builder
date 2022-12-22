@@ -25,10 +25,10 @@ jobs:
         run: gh release download ${{steps.var.outputs.tag}} --repo tmux/tmux
       - run: tar xfz ./tmux-${{steps.var.outputs.tag}}.tar.gz
       - run: mkdir ./dest
-      - run: ./configure --prefix=./dest
+      - run: ./configure --prefix=$PWD/dest
         working-directory: ./tmux-${{steps.var.outputs.tag}}
       - run: make
         working-directory: ./tmux-${{steps.var.outputs.tag}}
       - run: make install
         working-directory: ./tmux-${{steps.var.outputs.tag}}
-      - run: ls ./dest
+      - run: ls $PWD/dest
