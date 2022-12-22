@@ -7,7 +7,9 @@ on:
   schedule:
     - cron: 00 0 * * *
   workflow_dispatch:
-  
+
+env:
+  GH_TOKEN: ${{ github.token }}
     
 jobs:
   build:
