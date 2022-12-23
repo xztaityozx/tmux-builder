@@ -5,3 +5,6 @@ build-result.tar.gz:
 
 dest:
 	tar xfz ./build-result.tar.gz
+
+clean:
+	rm -rf build-result.tar.gz dest/

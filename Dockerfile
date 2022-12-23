@@ -15,6 +15,10 @@ WORKDIR $PWD/tmux-${TMUX_VERSION}
 RUN ./configure --prefix=/dest
 RUN make
 RUN make install
+
+RUN wget https://raw.githubusercontent.com/zsh-users/zsh/master/Completion/Unix/Command/_tmux
+RUN chmod +x _tmux
+RUN cp _tmux /dest/_tmux
 RUN tar cfz /build-result.tar.gz /dest/*
 
 CMD bash
