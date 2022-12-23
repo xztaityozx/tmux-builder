@@ -25,10 +25,6 @@ jobs:
         run: gh release download ${{steps.var.outputs.tag}} --repo tmux/tmux
       - run: tar xfz ./tmux-${{steps.var.outputs.tag}}.tar.gz
       - run: mkdir ./dest
-      - run: ./configure --prefix=$PWD/dest
-        working-directory: ./tmux-${{steps.var.outputs.tag}}
-      - run: make
-        working-directory: ./tmux-${{steps.var.outputs.tag}}
-      - run: make install
-        working-directory: ./tmux-${{steps.var.outputs.tag}}
-      - run: ls $PWD/dest
+      - run: docker build --build-args TMUX_VERSION=${{steps.var.outputs.tag}} -t tmux-builder ./
+      - run: docker run --rm -v $PWD/tmux-${{steps.var.outputs.tag}}/:/work -v $PWD/dest:/dest tmux-builder
+      - run: ls ./dest
