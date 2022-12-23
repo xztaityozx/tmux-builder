@@ -25,7 +25,7 @@ jobs:
         run: gh release download ${{steps.var.outputs.tag}} --repo tmux/tmux
       - run: tar xfz ./tmux-${{steps.var.outputs.tag}}.tar.gz
       - run: mkdir ./dest
-      - run: sudo apt install -y libevent-dev ncurses-dev build-essential bison pkg-config
+      - run: sudo apt-get install -y libevent-dev ncurses-dev build-essential bison pkg-config
         env:
           DEBIAN_FRONTEND: noninteractive
       - run: ./configure --prefix=$PWD/dest
