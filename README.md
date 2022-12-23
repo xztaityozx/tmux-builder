@@ -1,2 +1,2 @@
-# tmux-bin
-tmuxのビルド済みバイナリをReleasesに置きたいやつ
+# tmux-builder
+zinitでtmuxをインストールしたりしなかったりしたいので作ったリポジトリ
