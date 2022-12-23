@@ -36,7 +36,7 @@ jobs:
         run: gh release download ${{steps.var.outputs.tag}} --repo tmux/tmux
       - run: tar xfz ./tmux-${{steps.var.outputs.tag}}.tar.gz
       - run: mkdir ./dest
-      - run: sudo apt-get update && sudo apt-get upgrade -y
+      - run: sudo apt-get update
       - run: sudo apt-get install -y libevent-dev ncurses-dev build-essential bison pkg-config
         env:
           DEBIAN_FRONTEND: noninteractive
