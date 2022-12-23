@@ -12,12 +12,27 @@ env:
   GH_TOKEN: ${{ github.token }}
     
 jobs:
+  check-new-release:
+    runs-on: ubuntu-latest
+    outputs:
+      has-new-release: ${{steps.var.outputs.result}}
+    steps:
+      - uses: actions/checkout@v3
+      - run: wget https://github.com/cli/cli/releases/download/v2.21.0/gh_2.21.0_linux_amd64.deb
+      - run: sudo dpkg -i ./gh_2.21.0_linux_amd64.deb
+      - run: |
+          ( gh release list | grep "$(gh release view --repo tmux/tmux --jq .tagName --json tagName)" && echo "result=0" || echo "result=1" ) >> $GITHUB_OUTPUT
+        id: var
   build:
+    needs: [check-new-release]
+    if: ${{needs.check-new-release.outputs.has-new-release == 1}}
     strategy:
       matrix:
         os: [ubuntu-latest]
     runs-on: ${{matrix.os}}
     steps:
+      - run: wget https://github.com/cli/cli/releases/download/v2.21.0/gh_2.21.0_linux_amd64.deb
+      - run: sudo dpkg -i ./gh_2.21.0_linux_amd64.deb
       - name: get latest tag
         id: var
         run: echo "tag=$(gh release view --repo tmux/tmux --jq .tagName --json tagName)" >> $GITHUB_OUTPUT
@@ -25,13 +40,20 @@ jobs:
         run: gh release download ${{steps.var.outputs.tag}} --repo tmux/tmux
       - run: tar xfz ./tmux-${{steps.var.outputs.tag}}.tar.gz
       - run: mkdir ./dest
+      - run: sudo apt-get update && sudo apt-get upgrade -y
       - run: sudo apt-get install -y libevent-dev ncurses-dev build-essential bison pkg-config
         env:
           DEBIAN_FRONTEND: noninteractive
+      - run: ls
+        working-directory: ./tmux-${{steps.var.outputs.tag}}/
       - run: ./configure --prefix=$PWD/dest
-        working_directory: ./tmux-${{steps.var.outputs.tag}}/
+        working-directory: ./tmux-${{steps.var.outputs.tag}}/
       - run: make
-        working_directory: ./tmux-${{steps.var.outputs.tag}}/
+        working-directory: ./tmux-${{steps.var.outputs.tag}}/
       - run: make install
-        working_directory: ./tmux-${{steps.var.outputs.tag}}/
-      - run: ls ./dest
+        working-directory: ./tmux-${{steps.var.outputs.tag}}/
+      - run: tar cfz tmux-${{steps.var.outputs.tag}}.tar.gz ./tmux-${{steps.var.outputs.tag}}/dest/*
+      
+      - uses: actions/checkout@v3
+      - run: gh release create ${{steps.var.outputs.tag}} --notes "tmux ${{steps.var.outputs.tag}}" ./tmux-${{steps.var.outputs.tag}}.tar.gz
+
