@@ -18,8 +18,6 @@ jobs:
       has-new-release: ${{steps.var.outputs.result}}
     steps:
       - uses: actions/checkout@v3
-      - run: wget https://github.com/cli/cli/releases/download/v2.21.0/gh_2.21.0_linux_amd64.deb
-      - run: sudo dpkg -i ./gh_2.21.0_linux_amd64.deb
       - run: |
           ( gh release list | grep "$(gh release view --repo tmux/tmux --jq .tagName --json tagName)" && echo "result=0" || echo "result=1" ) >> $GITHUB_OUTPUT
         id: var
@@ -31,8 +29,6 @@ jobs:
         os: [ubuntu-latest]
     runs-on: ${{matrix.os}}
     steps:
-      - run: wget https://github.com/cli/cli/releases/download/v2.21.0/gh_2.21.0_linux_amd64.deb
-      - run: sudo dpkg -i ./gh_2.21.0_linux_amd64.deb
       - name: get latest tag
         id: var
         run: echo "tag=$(gh release view --repo tmux/tmux --jq .tagName --json tagName)" >> $GITHUB_OUTPUT
