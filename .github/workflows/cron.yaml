@@ -25,6 +25,13 @@ jobs:
         run: gh release download ${{steps.var.outputs.tag}} --repo tmux/tmux
       - run: tar xfz ./tmux-${{steps.var.outputs.tag}}.tar.gz
       - run: mkdir ./dest
-      - run: docker build --build-args TMUX_VERSION=${{steps.var.outputs.tag}} -t tmux-builder ./
-      - run: docker run --rm -v $PWD/tmux-${{steps.var.outputs.tag}}/:/work -v $PWD/dest:/dest tmux-builder
+      - run: sudo apt install -y libevent-dev ncurses-dev build-essential bison pkg-config
+        env:
+          DEBIAN_FRONTEND: noninteractive
+      - run: ./configure --prefix=$PWD/dest
+        working_directory: ./tmux-${{steps.var.outputs.tag}}/
+      - run: make
+        working_directory: ./tmux-${{steps.var.outputs.tag}}/
+      - run: make install
+        working_directory: ./tmux-${{steps.var.outputs.tag}}/
       - run: ls ./dest
